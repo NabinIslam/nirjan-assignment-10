@@ -1,39 +1,31 @@
-import { Button, Label, TextInput } from "flowbite-react";
+import { Button, FileInput, Label, TextInput } from "flowbite-react";
 import { useContext } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../provider/AuthProvider";
 import toast from "react-hot-toast";
 import GoogleButton from "react-google-button";
 import { Helmet } from "react-helmet-async";
+import { useForm } from "react-hook-form";
 
 const Register = () => {
   const { createUser, updateUser, googleSignIn } = useContext(AuthContext);
   const location = useLocation();
   const navigate = useNavigate();
+  const { register, handleSubmit } = useForm();
 
   const from = location.state?.from?.pathname || "/";
 
-  const handleSubmit = e => {
-    e.preventDefault();
-
-    const form = new FormData(e.target);
-
-    const name = form.get("name");
-    console.log("🚀 ~ handleSubmit ~ name:", name);
-    const email = form.get("email");
-    console.log("🚀 ~ handleSubmit ~ email:", email);
-    const password = form.get("password");
-    console.log("🚀 ~ handleSubmit ~ password:", password);
-
-    createUser(email, password)
+  const onSubmit = data => {
+    console.log(data);
+    createUser(data.email, data.password)
       .then(() => {
-        updateUser(name)
+        updateUser(data.name, data.photo)
           .then(() => {})
-          .catch(err => console.error(err));
+          .catch(err => toast.error("Could not update user"));
         navigate(from, { replace: true });
         toast.success("Registration successful");
       })
-      .catch(err => console.error(err));
+      .catch(err => toast.error("Could not register!"));
   };
 
   const handleGoogleSignIn = () => {
@@ -42,7 +34,7 @@ const Register = () => {
         navigate(from, { replace: true });
         toast.success("Registration successful");
       })
-      .catch(err => console.error(err));
+      .catch(err => toast.error("Could not register!"));
   };
 
   return (
@@ -53,15 +45,14 @@ const Register = () => {
       <div className="container">
         <form
           className="flex max-w-md flex-col gap-4 mx-auto"
-          onSubmit={handleSubmit}
+          onSubmit={handleSubmit(onSubmit)}
         >
           <div>
             <div className="mb-2 block">
               <Label htmlFor="name" value="Your name" />
             </div>
             <TextInput
-              id="name"
-              name="name"
+              {...register("name")}
               type="text"
               placeholder="Full name"
               required
@@ -72,8 +63,7 @@ const Register = () => {
               <Label htmlFor="email" value="Your email" />
             </div>
             <TextInput
-              id="email"
-              name="email"
+              {...register("email")}
               type="email"
               placeholder="name@example.com"
               required
@@ -81,9 +71,20 @@ const Register = () => {
           </div>
           <div>
             <div className="mb-2 block">
+              <Label htmlFor="photo" value="Your photo" />
+            </div>
+            <TextInput
+              {...register("photo")}
+              type="text"
+              placeholder="Photo URL"
+              required
+            />
+          </div>
+          <div>
+            <div className="mb-2 block">
               <Label htmlFor="password" value="Your password" />
             </div>
-            <TextInput id="password" name="password" type="password" required />
+            <TextInput {...register("password")} type="password" required />
           </div>
           <Button type="submit">Register</Button>
           <p className="text-sm">

@@ -5,29 +5,24 @@ import { AuthContext } from "../provider/AuthProvider";
 import toast from "react-hot-toast";
 import GoogleButton from "react-google-button";
 import { Helmet } from "react-helmet-async";
+import { useForm } from "react-hook-form";
 
 const Login = () => {
   const { signIn, googleSignIn } = useContext(AuthContext);
   const location = useLocation();
   const navigate = useNavigate();
+  const { register, handleSubmit } = useForm();
 
   const from = location.state?.from?.pathname || "/";
 
-  const handleSubmit = e => {
-    e.preventDefault();
-
-    const form = new FormData(e.target);
-
-    const email = form.get("email");
-    const password = form.get("password");
-
-    signIn(email, password)
+  const onSubmit = data => {
+    signIn(data.email, data.password)
       .then(() => {
         navigate(from, { replace: true });
 
         toast.success("Login successful");
       })
-      .catch(err => console.error(err));
+      .catch(err => toast.error("Could not login!"));
   };
 
   const handleGoogleSignIn = () => {
@@ -36,7 +31,7 @@ const Login = () => {
         navigate(from, { replace: true });
         toast.success("Login successful");
       })
-      .catch(err => console.error(err));
+      .catch(err => toast.error("Could not login!"));
   };
 
   return (
@@ -46,15 +41,14 @@ const Login = () => {
       </Helmet>
       <form
         className="flex max-w-md flex-col gap-4 mx-auto"
-        onSubmit={handleSubmit}
+        onSubmit={handleSubmit(onSubmit)}
       >
         <div>
           <div className="mb-2 block">
             <Label htmlFor="email" value="Your email" />
           </div>
           <TextInput
-            id="email"
-            name="email"
+            {...register("email")}
             type="email"
             placeholder="name@example.com"
             required
@@ -64,7 +58,7 @@ const Login = () => {
           <div className="mb-2 block">
             <Label htmlFor="password" value="Your password" />
           </div>
-          <TextInput id="password" name="password" type="password" required />
+          <TextInput {...register("password")} type="password" required />
         </div>
         <Button type="submit">Login</Button>
         <p className="text-sm">

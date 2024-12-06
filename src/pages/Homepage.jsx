@@ -1,8 +1,10 @@
+import LatestVisas from "../components/LatestVisas";
+
 const Homepage = () => {
   return (
-    <div>
-      <h1>This is Homepage component</h1>
-    </div>
+    <main>
+      <LatestVisas />
+    </main>
   );
 };
 

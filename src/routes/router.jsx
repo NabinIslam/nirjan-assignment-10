@@ -4,6 +4,8 @@ import ErrorPage from "../pages/ErrorPage";
 import Homepage from "../pages/Homepage";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
+import PrivateRoute from "./PrivateRoute";
+import AddVisa from "../pages/AddVisa";
 
 const router = createBrowserRouter([
   {
@@ -22,6 +24,14 @@ const router = createBrowserRouter([
       {
         path: "/register",
         element: <Register />,
+      },
+      {
+        path: "/add-visa",
+        element: (
+          <PrivateRoute>
+            <AddVisa />
+          </PrivateRoute>
+        ),
       },
     ],
   },
