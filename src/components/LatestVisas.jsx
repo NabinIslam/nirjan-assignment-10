@@ -1,33 +1,23 @@
+import { useEffect, useState } from "react";
 import VisaCard from "./VisaCard";
 
 const LatestVisas = () => {
-  const visas = [
-    {
-      country: "Canada",
-      countryImage: "https://example.com/canada.jpg",
-      visaType: "Student Visa",
-      processingTime: "4-6 weeks",
-      fee: "$150",
-      validity: "5 years",
-      applicationMethod: "Online",
-    },
-    {
-      country: "Australia",
-      countryImage: "https://example.com/australia.jpg",
-      visaType: "Work Visa",
-      processingTime: "2-4 weeks",
-      fee: "$200",
-      validity: "2 years",
-      applicationMethod: "In-Person",
-    },
-    // Add more visa objects here...
-  ];
+  const [visas, setVisas] = useState(null);
+
+  useEffect(() => {
+    fetch("http://localhost:5000/visas/")
+      .then(response => response.json())
+      .then(data => setVisas(data));
+  }, []);
 
   return (
     <section className="py-[50px]">
+      <div className="container">
+        <h2 className="text-center font-bold text-4xl mb-5">Latest visas</h2>
+      </div>
       <div className="container grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 p-4">
-        {visas.map((visa, index) => (
-          <VisaCard key={index} {...visa} />
+        {visas?.map(visa => (
+          <VisaCard key={visa._id} visa={visa} />
         ))}
       </div>
     </section>

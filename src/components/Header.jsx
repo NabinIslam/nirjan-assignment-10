@@ -1,6 +1,6 @@
 import { Avatar, Button, Dropdown, Navbar } from "flowbite-react";
 import { useContext } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../provider/AuthProvider";
 import toast from "react-hot-toast";
 
@@ -8,6 +8,8 @@ const Header = () => {
   const { user, logOut } = useContext(AuthContext);
 
   const navigate = useNavigate();
+
+  const { pathname } = useLocation();
 
   const handleLogout = () => {
     logOut()
@@ -21,11 +23,11 @@ const Header = () => {
   };
 
   return (
-    <header className="bg-white sticky top-0 shadow">
+    <header className="bg-white sticky top-0 shadow z-50">
       <nav className="container bg-white">
         <Navbar fluid rounded className="bg-white">
           <Navbar.Brand>
-            <Link>VisaMaster</Link>
+            <Link className="font-extrabold text-xl">VisaMaster</Link>
           </Navbar.Brand>
           <div className="flex md:order-2">
             {user ? (
@@ -46,9 +48,18 @@ const Header = () => {
                     {user.email}
                   </span>
                 </Dropdown.Header>
-                <Dropdown.Item>Add Visa</Dropdown.Item>
-                <Dropdown.Item>My Added Visa</Dropdown.Item>
-                <Dropdown.Item>My Visa Applications</Dropdown.Item>
+                <Link to="/add-visa">
+                  <Dropdown.Item>Add Visa</Dropdown.Item>
+                </Link>
+
+                <Link to="/my-added-visas">
+                  <Dropdown.Item>My Added Visas</Dropdown.Item>
+                </Link>
+
+                <Link to="/my-visa-applications">
+                  <Dropdown.Item>My Visa Applications</Dropdown.Item>
+                </Link>
+
                 <Dropdown.Divider />
                 <Dropdown.Item onClick={handleLogout}>Logout</Dropdown.Item>
               </Dropdown>
@@ -61,10 +72,12 @@ const Header = () => {
             <Navbar.Toggle />
           </div>
           <Navbar.Collapse>
-            <Navbar.Link href="#" active>
+            <Navbar.Link href="/" active={pathname === "/"}>
               Home
             </Navbar.Link>
-            <Navbar.Link href="#">All visas</Navbar.Link>
+            <Navbar.Link href="/all-visas" active={pathname === "/all-visas"}>
+              All visas
+            </Navbar.Link>
           </Navbar.Collapse>
         </Navbar>
       </nav>
